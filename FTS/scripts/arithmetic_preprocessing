@@ -1,0 +1,158 @@
+#!/bin/bash
+# Preprocess the arithmetic of a maphys file.
+#
+##
+# Dependencies : cat,sed,dirname,date
+#  
+##
+#
+# Author : Yohan Lee-tin-yien <yohan.lee-tin-yien@inria.fr>
+#
+##
+# History
+#
+# - 2011-06-21 : Initial implementation
+#
+##
+
+
+
+# Functions
+# ---------
+function PrintHelpAndExit()
+{
+cat <<EOF
+NAME
+    $0 - Preprocess the arithmetic of a maphys file
+SYNOPSIS
+    $0 <arithmetic> <infile> <outfile>
+
+DESCRIPTION
+    Script used to preprocess maphys files.
+    Substitute in the <inputfile>, all occurences of "arithmetic" dependent patterns.
+    The result is saved in <outfile>.
+    Here is the list of those patterns :
+
+    XFTS_ARITH -> <arithmetic>    
+    XFTS_      -> <arithmetic>FTS_
+
+    XFTS_FLOAT -> Complex(kind=4) if <arithmetic> = c
+                 Real   (kind=8) if <arithmetic> = d
+                 Real   (kind=4) if <arithmetic> = s
+                 Complex(kind=8) if <arithmetic> = z
+
+    XFTS_FLOATKIND -> 4 if <arithmetic> = c or s
+                     8 if <arithmetic> = d or z
+
+    XFTS_FLOATBYTESIZE -> 8  if <arithmetic> = c 
+                          8  if <arithmetic> = d
+                          4  if <arithmetic> = s
+                          16 if <arithmetic> = z
+
+    XFTS_FLOATMPI -> MPI_COMPLEX          if <arithmetic> = c 
+                     MPI_DOUBLE_PRECISION if <arithmetic> = d
+                     MPI_REAL             if <arithmetic> = s
+                     MPI_DOUBLE_COMPLEX   if <arithmetic> = z
+
+    XFTS_FLOATZERO -> (0._4,0._4) if <arithmetic> = c
+                      (0._8)      if <arithmetic> = d
+                      (0._4)      if <arithmetic> = s
+                      (0._8,0._8) if <arithmetic> = z
+
+    XFTS_FLOATONE  -> (1._4,0._4) if <arithmetic> = c
+                      (1._8)      if <arithmetic> = d
+                      (1._4)      if <arithmetic> = s
+                      (1._8,1._8) if <arithmetic> = z
+
+    XFTS_HAVE_ARITH_C -> 1 if <arithmetic> = c , 0 if not
+    XFTS_HAVE_ARITH_D -> 1 if <arithmetic> = d , 0 if not 
+    XFTS_HAVE_ARITH_S -> 1 if <arithmetic> = s , 0 if not 
+    XFTS_HAVE_ARITH_Z -> 1 if <arithmetic> = z , 0 if not 
+
+    XFTS_DOT -> CDOTC if <arithmetic> = c
+                DDOT  if <arithmetic> = d
+                SDOT  if <arithmetic> = s
+                ZDOTC if <arithmetic> = z
+
+    XFTS_GENFILE_COMMENT -> 'This file was generated from <infile> at $(date +"%F %T") by $0'
+
+    When conflicts occurs, the substitutions are performed from the longuest match
+    to the shortest one.
+
+ARGUMENTS
+    arithmetic
+          The arithmetic with valid values :
+          c - for the complex single precision arithmetic
+          d - for the real    double precision arithmetic
+          s - for the real    single precision arithmetic
+          z - for the complex double precision arithmetic
+    infile
+          The file to be preprocessed
+    outfile
+          The preprocessed file.
+          If outfile already exist, replace it.
+EOF
+
+exit 1
+}
+
+# Program
+# -------
+
+## checks arguments
+[[ ${#@} != 3 ]] && \
+    echo "Error : wrong number of arguments (${#@} instead of 3)" && PrintHelpAndExit
+
+arithmetic=$1
+[[ "$1" != "c" ]] && [[ "$1" != "d" ]] && [[ "$1" != "s" ]] && [[ "$1" != "z" ]] && \
+    echo "Error : wrong arithmetic (${1} instead of c,d,s or d)" && PrintHelpAndExit
+
+infile=$2
+[[ ! -r "$2" ]] && \
+    echo "Error : bad infile (${2})" && PrintHelpAndExit
+
+outfile=$3
+[[ ! -d $(dirname $3) ]] && \
+    echo "Error : bad directory for outfile (${3})" && PrintHelpAndExit
+
+## patterns and its substitutions
+xfts_comment="This file was generated from $2 at "$(date +"%F %T")" by "$(basename $0)
+
+pats=("XFTS_HAVE_ARITH_C" "XFTS_HAVE_ARITH_D" "XFTS_HAVE_ARITH_S" "XFTS_HAVE_ARITH_Z")
+pats=( ${pats[@]}  "XFTS_ARITH" "XFTS_FLOATBYTESIZE" "XFTS_FLOATKIND" "XFTS_FLOATMPI" )
+pats=( ${pats[@]} "XFTS_FLOATZERO" "XFTS_FLOATONE" "XFTS_FLOAT" "XFTS_DOT" "XFTS_GENFILE_COMMENT" "XFTS_" )
+case $arithmetic in
+c) 
+	subs=( "1" "0" "0" "0")
+	subs=( ${subs[@]} "c" "8" "4" "MPI_COMPLEX" ) 
+        subs=( ${subs[@]} "(0._4,0._4)" "(1._4,0._4)" "Complex(KIND=4)" "CDOTC" "${xfts_comment}" "CFTS_") 
+	;;
+d) 
+	subs=( "0" "1" "0" "0")
+	subs=( ${subs[@]} "d" "8" "8" "MPI_DOUBLE_PRECISION" )
+	subs=( ${subs[@]}  "(0._8)     " "(1._8)     " "Real   (KIND=8)" "DDOT" "${xfts_comment}" "DFTS_") 
+	;;
+s)
+	subs=( "0" "0" "1" "0")
+	subs=( ${subs[@]} "s" "4" "4" "MPI_REAL" )
+	subs=( ${subs[@]} "(0._4)     " "(1._4)     " "Real   (KIND=4)" "SDOT" "${xfts_comment}" "SFTS_") 
+	;;
+z) 
+	subs=( "0" "0" "0" "1")
+	subs=( ${subs[@]} "z" "16" "8" "MPI_DOUBLE_COMPLEX" )
+	subs=( ${subs[@]} "(0._8,0._8)" "(1._8,0._8)" "Complex(KIND=8)" "ZDOTC" "${xfts_comment}" "ZFTS_") 
+	;;
+esac
+
+## substitute
+
+# echo ${#pats[@]} == ${#subs[@]}
+[[ ! ${#pats[@]} == ${#subs[@]} ]] && echo "Error : nb patterns != nb substitutions" && exit 1
+
+sedscript=""
+for i in $(seq 0 $((${#pats[@]}-1)) ); do
+    sedscript=${sedscript}"s|${pats[i]}|${subs[i]}|g;"
+done
+
+#echo "${sedscript}"
+sed "${sedscript}" $infile > $outfile

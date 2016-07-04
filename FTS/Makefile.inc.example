@@ -1,0 +1,170 @@
+# Which arithmetic should be built
+WITH_ARITHS := c d s z
+ARITHS := $(filter c d s z,$(WITH_ARITHS))
+# uncomment the following line if you want to keep 
+# the generated source files during the compilation
+KEEP_GENERATED_SOURCES=YES
+# By default if "A" use module "B"
+# the rule "a.o : b.mod" is generated
+# 
+# you may change that rule to "a.o : | b.mod"
+# to avoid recompilations.
+# In this mode, you must do a "make clean" before the
+# "make", if you change when you interface of module "B"
+#
+WEAKLY_LINK_OBJECTS2MODULES=YES
+
+# where to install ?
+prefix := $(shell pwd)
+exec_prefix := $(prefix)
+bindir := $(prefix)/bin
+includedir := $(prefix)/include
+libdir := $(prefix)/lib
+
+
+datarootdir := $(prefix)/share
+
+
+#--------------------------
+# Programs
+#--------------------------
+
+# compilers
+MPIFC := mpif90
+MPICC := mpicc
+MPIF77 := mpif77
+
+#CC := $(MPICC)
+FC := $(MPIFC)
+#FC := gfortran
+F77 := $(MPIF77)
+
+# for installation
+INSTALL := install
+INSTALL_PROGRAM := $(INSTALL) 
+INSTALL_DATA := $(INSTALL) -m 644
+
+# optional : necessary for the tests
+MPIEXEC := mpirun
+MPIOPTS := -np 4
+
+FFLAGS := # -g -O0 -Wall 
+FCFLAGS := 
+LDFLAGS :=
+
+# ALL_FCFLAGS  :=  -I$(topsrcdir)/include -I.
+
+
+# mumps
+MUMPS_prefix  := ${HOME}/MUMPS_5.0.1
+MUMPS_LIBS := -L${MUMPS_prefix}/lib   $(foreach a,$(ARITHS),-l$(a)mumps) -lmumps_common  -lpord 
+MUMPS_FCFLAGS  :=  -DHAVE_LIBMUMPS
+MUMPS_FCFLAGS +=  -I${MUMPS_prefix}/include
+# uncomment this line if mumps was compiled to use scotch
+MUMPS_FCFLAGS += -DLIBMUMPS_USE_LIBSCOTH
+
+
+#qrmumps
+QRM_prefix  := ${HOME}/qr_mumps-1.2
+QRM_LIB := -L${QRM_prefix}/lib  $(foreach a,$(ARITHS),-l$(a)qrm)  -lqrm_common
+# $(foreach a,$(ARITHS),-l$(a)qrm) -lqrm_common
+QRM_FCFLAG += -I${QRM_prefix}/include
+
+#COLAMD
+COLAMD_prefix := /usr/local
+COLAMD_LIB := -L${COLAMD_prefix}/lib -lcolamd
+COLAMD_FCFLAG += -I${COLAMD_prefix}/include 
+
+QRM_LIBS =  $(COLAMD_LIB) $(QRM_LIB)
+QRM_FCFLAGS = $(QRM_FCFLAG) $(QRM_FCFLAG)  
+
+
+# metis
+METIS_topdir :=  /usr/local
+METIS_CFLAGS := -DHAVE_LIBMETIS -I${METIS_topdir}/include
+METIS_FCFLAGS := -DHAVE_LIBMETIS -I${METIS_topdir}/include
+METIS_LIBS := -L${METIS_topdir}/lib -lmetis
+
+# scotch
+
+
+SCOTCH_prefix := ${HOME}/scotch_6.0.4
+SCOTCH_LIBS := -L$(SCOTCH_prefix)/lib -lscotch -lscotcherrexit  -lscotcherr -lesmumps -lscotch -lscotcherrexit  -lscotcherr
+SCOTCH_FCFLAGS  :=  -DHAVE_LIBSCOTCH 
+SCOTCH_FCFLAGS  +=  -I$(SCOTCH_prefix)/include
+
+ifneq ($(filter $(MUMPS_FCFLAGS),-DLIBMUMPS_USE_LIBSCOTCH),)
+SCOTCH_LIBS +=  -lesmumps
+endif
+
+# dense_algebra libraries
+# must include BLAS,LAPACK + those of MUMPS/PASTIX
+
+#DALGEBRA_PARALLEL_LIBS := $(MKLROOT)/lib/intel64/libmkl_scalapack_lp64.a -Wl,--start-group  $(MKLROOT)/lib/intel64/libmkl_intel_lp64.a $(MKLROOT)/lib/intel64/libmkl_core.a $(MKLROOT)/lib/intel64/libmkl_sequential.a -Wl,--end-group $(MKLROOT)/lib/intel64/libmkl_blacs_openmpi_lp64.a -lpthread -lm
+
+DALGEBRA_PARALLEL_LIBS :=  ${MKLROOT}/lib/intel64/libmkl_scalapack_lp64.a -Wl,--start-group ${MKLROOT}/lib/intel64/libmkl_gf_lp64.a ${MKLROOT}/lib/intel64/libmkl_core.a ${MKLROOT}/lib/intel64/libmkl_sequential.a ${MKLROOT}/lib/intel64/libmkl_blacs_openmpi_lp64.a -Wl,--end-group -lpthread -lm -ldl
+DALGEBRA_FCFLAGS := -DHAVE_LIBLAPACK
+DALGEBRA_PRELIBS := 
+DALGEBRA_LIBS  :=  $(DALGEBRA_PARALLEL_LIBS) $(DALGEBRA_SEQUENTIAL_LIBS) -lpthread 
+DALGEBRA_POSTLIBS  :=  
+
+
+# # lapack
+#LAPACK_LIBS :=
+#DALGEBRA_FCFLAGS := -DHAVE_LIBLAPACK
+# DALGEBRA_PRELIBS :=
+
+# HWLOC
+
+#HWLOC_prefix := `spack location -i  hwloc`
+#HWLOC_FCFLAGS := -DHAVE_LIBHWLOC -I$(HWLOC_prefix)/include
+#HWLOC_LIBS := -L$(HWLOC_prefix)/lib -lhwloc
+
+#--------------------------
+# Header files
+#--------------------------
+
+#--------------------------
+# Structures
+#--------------------------
+
+#--------------------------
+# Compiler characteristics
+#--------------------------
+
+MODEXT:= .mod
+OBJEXT:= .o
+
+FFLAGS := # -g -O0 -Wall 
+FCFLAGS := # -DMAPHYS_DEBUG -g -O0 -Wall -check all
+LDFLAGS :=
+
+#--------------------------
+# Library functions
+#--------------------------
+
+# uncomment the following line if you want 
+# to print an error on failed checks.
+# This option may slow down the execution.
+#CHECK_FLAGS   :=  -DMAPHYS_BACKTRACE_ERROR
+
+
+#ALL_FCFLAGS  :=  $(MAPHYS_FCFLAGS)  $(MUMPS_FCFLAGS) $(DALGEBRA_FCFLAGS) $(LDFLAGS) -I$(topdir)/include -I.
+
+ALL_FFLAGS   :=  $(FFLAGS) $(CHECK_FLAGS)
+ALL_FCFLAGS  :=  $(FCFLAGS) -m64 -I${MKLROOT}/include  -I$(abstopsrcdir)/include -I.  $(ALGO_FCFLAGS) $(CHECK_FLAGS) 
+ALL_LDFLAGS  :=  $(MUMPS_LIBS) $(QRM_LIBS)  $(DALGEBRA_LIBS)  $(METIS_LIBS)  $(SCOTCH_LIBS) $(HWLOC_LIBS)   $(LDFLAGS) -ldl  -fopenmp
+
+
+
+
+
+
+
+
+
+
+
+
+
+

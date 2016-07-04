@@ -1,0 +1,35 @@
+# Please see template.in for the description of this file format
+#MATFILE = ../matrices/small1.mtx
+#MATFILE = ../matrices/young1c.mtx
+#MATFILE = ../matrices/lns_3937.mtx
+#MATFILE = ../matrices/sherman2.mtx
+#MATFILE = ../matrices/li.mtx
+MATFILE = ../experimental/tdrk/script/Tdr455k_312_Lu.mtx
+#MATFILE =/lustre/giraud/from_yohan/lustre/matrices/matrix211.ijv
+#  [SYM] MATRIX SYMMETRY (0: General, 1:SPD, 2:symmetric )
+SYM = 0
+#VERBOSE
+ICNTL(4) = 4
+
+ICNTL(22)= 0	
+#[RCNTL(21)] Iterative Solver - Convergence criteria	
+RCNTL(21)= 1.0e-12
+
+# [ICNTL(24)] Iterative Solver - Maximum number of iterations
+ICNTL(24)= 100
+
+# [ICNTL(26)] Iterative Solver - GMRES : restart every X iterations.
+ICNTL(26)=50
+
+# [ICNTL(22)] Iterative Solver - GMRES : Orthogonalisation strategy
+ICNTL(22)=1
+
+#FAULT RATE
+ICNTL(28)=90
+# interpolation strategy (0: reset, 1: LI, 2: LSI,  3: restart)	
+ICNTL(29) =2
+#Maximal authorized faults
+ICNTL(33) =1
+#Type of fault (1:Simple fault 2:Double fault) 	
+ICNTL(34) = 1  	
+

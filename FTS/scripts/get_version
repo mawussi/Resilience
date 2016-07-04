@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# Extract the version from maphys include file
+# result is printed on stdout
+#
+# version must be defined as 
+#  
+# #define MAPHYS_VERSION 'version-toprint'
+# 
+grep '#define MAPHYS_VERSION' $1 | cut -d\' -f 2

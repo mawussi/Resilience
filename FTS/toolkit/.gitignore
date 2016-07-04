@@ -1,0 +1,16 @@
+# generated objects
+*.a
+*.o
+*.mod
+# generated sources
+cmph_*
+dmph_*
+smph_*
+zmph_*
+
+# temporary files
+*.bk*
+*~
+*#
+*TAGS
+

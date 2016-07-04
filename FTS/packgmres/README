@@ -1,0 +1,114 @@
+GMRES Pack - by CERFACS - encapsulated in MaPHyS
+================================================
+
+This is an encapsulation of CERFACS' gmres solver into a static Library for 
+the MaPHyS package. 
+
+the goal of those procedure is to solve a linear algebra problem 
+
+A x = b 
+
+where A is the matrix, b the right hand side, x the unkown vector.
+The method used here is the iterative GMRES method with some optimisations 
+(see references below). 
+
+Each file is specific to an arithmetic (simple/double real/complex)
+
+SHIPPING
+========
+
+By reading the license (see below), it seems that the source code can be shipped
+directly within MaPHyS' package for convenience reasons.
+
+If this is an issue, please inform one of us to remove the contents :
+
+Yohan Lee-tin-yien <yohan.lee-tin-yien@inria.fr>
+Azzam Haidar       <haidar@cerfacs.fr>
+
+
+LICENSE (extracted from the files)
+================================
+
+C*  Copyright (C) CERFACS 1998
+C*
+C*  SOFTWARE LICENSE AGREEMENT NOTICE - THIS SOFTWARE IS BEING PROVIDED TO
+C*  YOU BY CERFACS UNDER THE FOLLOWING LICENSE. BY DOWN-LOADING, INSTALLING
+C*  AND/OR USING THE SOFTWARE YOU AGREE THAT YOU HAVE READ, UNDERSTOOD AND
+C*  WILL COMPLY WITH THESE FOLLOWING TERMS AND CONDITIONS.
+C*
+C*  1 - This software program provided in source code format ("the " Source
+C*  Code ") and any associated documentation (the " Documentation ") are
+C*  licensed, not sold, to you.
+C*
+C*  2 - CERFACS grants you a personal, non-exclusive, non-transferable and
+C*  royalty-free right to use, copy or modify the Source Code and
+C*  Documentation, provided that you agree to comply with the terms and
+C*  restrictions of this agreement. You may modify the Source Code and
+C*  Documentation to make source code derivative works, object code
+C*  derivative works and/or documentation derivative Works (called "
+C*  Derivative Works "). The Source Code, Documentation and Derivative
+C*  Works (called " Licensed Software ") may be used by you for personal
+C*  and non-commercial use only. " non-commercial use " means uses that are
+C*  not or will not result in the sale, lease or rental of the Licensed
+C*  Software and/or the use of the Licensed Software in any commercial
+C*  product or service. CERFACS reserves all rights not expressly granted
+C*  to you. No other licenses are granted or implied.
+C*
+C*  3 - The Source Code and Documentation are and will remain the sole
+C*  property of CERFACS. The Source Code and Documentation are copyrighted
+C*  works. You agree to treat any modification or derivative work of the
+C*  Licensed Software as if it were part of the Licensed Software itself.
+C*  In return for this license, you grant CERFACS a non-exclusive perpetual
+C*  paid-up royalty-free license to make, sell, have made, copy, distribute
+C*  and make derivative works of any modification or derivative work you
+C*  make of the Licensed Software.
+C*
+C*  4- The licensee shall acknowledge the contribution of the Source Code
+C*  (using the reference [1]) in any publication of material dependent upon
+C*  upon the use of the Source Code. The licensee shall use reasonable
+C*  endeavours to notify the authors of the package of this publication.
+C*
+C*  [1] V. Frayssé, L. Giraud, S. Gratton, and J. Langou, A set of GMRES 
+C*    routines for real and complex arithmetics on high performance
+C*    computers, CERFACS Technical Report TR/PA/03/3, public domain software
+C*    available on www.cerfacs/algor/Softs, 2003
+C*
+C*  5- CERFACS has no obligation to support the Licensed Software it is
+C*  providing under this license.
+C*
+C*  THE LICENSED SOFTWARE IS PROVIDED " AS IS " AND CERFACS MAKE NO
+C*  REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED. BY WAY OF EXAMPLE,
+C*  BUT NOT LIMITATION, CERFACS MAKE NO REPRESENTATIONS OR WARRANTIES OF
+C*  MERCHANTIBILY OR FITNESS FOR ANY PARTICULAR PURPOSE OR THAT THE USE OF
+C*  THE LICENSED SOFTWARE OR DOCUMENTATION WILL NOT INFRINGE ANY THIRD
+C*  PARTY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS. CERFACS WILL NOT
+C*  BE LIABLE FOR ANY CONSEQUENTIAL, INCIDENTAL, OR SPECIAL DAMAGES, OR ANY
+C*  OTHER RELIEF, OR FOR ANY CLAIM BY ANY THIRD PARTY, ARISING FROM YOUR
+C*  USE OF THE LICENSED SOFTWARE.
+C*
+C*  6- For information regarding a commercial license for the Source Code
+C*  and Documentation, please contact Mrs Campassens (campasse@cerfacs.fr)
+C*
+C*  7- This license is effective until terminated. You may terminate this
+C*  license at any time by destroying the Licensed Software.
+C*
+C*    I agree all the terms and conditions of the above license agreement
+
+
+ 
+REQUIREMENTS
+============
+
+None except for the following sources files :
+
+files        :  s/d/c/zPackGmres.f
+available at : http://www.cerfacs.fr/algor/Softs/GMRES/index.html
+ 
+
+REFERENCES
+==========
+
+[1] V. Frayssé, L. Giraud, S. Gratton, and J. Langou,
+A set of GMRES routines for real and complex arithmetics on high performance computers,
+CERFACS Technical Report TR/PA/03/3, 
+public domain software available on www.cerfacs/algor/Softs, 2003

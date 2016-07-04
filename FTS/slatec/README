@@ -1,0 +1,34 @@
+a few SLATEC functions - encapsulated in MaPHyS
+================================================
+
+This is an encapsulation of the "ipsort" function distributed
+in SLATEC Library into a static Library for the MaPHyS package. 
+
+the goal is to sort elements.
+
+SHIPPING
+======== 
+
+By reading the license (see below), it seems that the source code can be shipped
+directly within MaPHyS' package for convenience reasons.
+
+If this is an issue, please inform one of us to remove the contents :
+
+Yohan Lee-tin-yien <yohan.lee-tin-yien@inria.fr>
+Azzam Haidar       <haidar@cerfacs.fr>
+
+LICENSE 
+========
+
+It is in public domain.
+
+
+REQUIREMENTS
+============
+
+None except for the following sources files :
+
+files : fdump.f  i1mach.f  icopy.f  ipsort.f  isort.f  j4save.f 
+        xercnt.f  xerhlt.f  xermsg.f  xerprn.f  xersve.f  xgetua.f
+available at : http://www.netlib.org/slatec/
+
